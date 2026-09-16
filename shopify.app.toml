@@ -2,7 +2,7 @@
 
 client_id = "c3cc609a74e3fb280387e1deedf321d2"
 name = "ADP Showroom Availability"
-application_url = "https://example.com"
+application_url = "https://adp-showroom-availability.onrender.com"
 embedded = true
 
 [build]
@@ -26,7 +26,7 @@ optional_scopes = [ ]
 use_legacy_install_flow = false
 
 [auth]
-redirect_urls = [ ]
+redirect_urls = ["https://adp-showroom-availability.onrender.com/auth/callback"]
 
 [product.metafields.app.demo_info]
 type = "single_line_text_field"
