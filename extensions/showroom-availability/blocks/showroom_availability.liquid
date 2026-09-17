@@ -36,29 +36,37 @@
     );
   }
 
-  .uae-flag::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 6px;
-    height: 100%;
-    background: #ff0000;
-  }
+  .uae-flag {
+  display: inline-block !important;
+  width: 24px !important;
+  height: 16px !important;
+  margin-right: 8px !important;
+  position: relative !important;
+  flex-shrink: 0 !important;
+  vertical-align: middle !important;
+  background: linear-gradient(
+    to bottom,
+    #00732f 0%,
+    #00732f 33.33%,
+    #ffffff 33.33%,
+    #ffffff 66.66%,
+    #000000 66.66%,
+    #000000 100%
+  ) !important;
+  border-radius: 1px !important;
+  overflow: hidden !important;
+}
 
-  @media screen and (max-width: 749px) {
-    .showroom-availability {
-      padding: 15px;
-    }
-
-    .showroom-availability__location {
-      align-items: flex-start;
-    }
-
-    .showroom-availability__name {
-      font-size: 14px;
-    }
-  }
+.uae-flag::before {
+  content: "" !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 6px !important;
+  height: 100% !important;
+  background: #ff0000 !important;
+  display: block !important;
+}
 </style>
 
 <script>
@@ -114,7 +122,7 @@
          */
         if (dubai && abuDhabi) {
           location.innerHTML =
-  '<span class="uae-flag"></span> Dubai & Abu Dhabi Showrooms';
+  '<span class="uae-flag" aria-hidden="true"></span><span>Dubai & Abu Dhabi Showrooms</span>';
 
           message.textContent =
             "This product will be shipped from either of our showrooms.";
@@ -125,7 +133,7 @@
          */
         else if (dubai) {
           location.innerHTML =
-  '<span class="uae-flag"></span> Dubai Showroom';
+  '<span class="uae-flag" aria-hidden="true"></span><span>Dubai Showroom</span>';
 
           message.textContent =
             "This product will be shipped from our Dubai showroom.";
@@ -136,7 +144,7 @@
          */
         else if (abuDhabi) {
           location.innerHTML =
-  '<span class="uae-flag"></span> Abu Dhabi Showroom';
+  '<span class="uae-flag" aria-hidden="true"></span><span>Abu Dhabi Showroom</span>';
 
           message.textContent =
             "This product will be shipped from our Abu Dhabi showroom.";
