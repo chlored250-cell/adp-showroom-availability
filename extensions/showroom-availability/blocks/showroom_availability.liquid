@@ -17,50 +17,33 @@
 </div>
 
 <style>
-  .showroom-availability {
-    margin: 16px 0;
-    padding: 18px 18px;
-    background: #f7f6f3;
-    border-radius: 12px;
-    font-family: inherit;
+   .uae-flag {
+    display: inline-block;
+    width: 22px;
+    height: 15px;
+    margin-right: 7px;
+    vertical-align: -2px;
+    position: relative;
+    border-radius: 1px;
+    background: linear-gradient(
+      to bottom,
+      #00732f 0%,
+      #00732f 33.33%,
+      #ffffff 33.33%,
+      #ffffff 66.66%,
+      #000000 66.66%,
+      #000000 100%
+    );
   }
 
-  .showroom-availability__label {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    margin-bottom: 12px;
-    color: #111;
-  }
-
-  .showroom-availability__location {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    margin-bottom: 10px;
-  }
-
-  .showroom-availability__name {
-    font-size: 15px;
-    font-weight: 600;
-    color: #16803c;
-  }
-
-  .showroom-availability__status {
-    background: #e3f3e8;
-    color: #16803c;
-    padding: 8px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  .showroom-availability__message {
-    font-size: 13px;
-    line-height: 1.5;
-    color: #666;
+  .uae-flag::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    background: #ff0000;
   }
 
   @media screen and (max-width: 749px) {
@@ -130,8 +113,8 @@
          * Both showrooms have stock.
          */
         if (dubai && abuDhabi) {
-          location.textContent =
-            "🇦🇪 Dubai & Abu Dhabi Showrooms";
+          location.innerHTML =
+  '<span class="uae-flag"></span> Dubai & Abu Dhabi Showrooms';
 
           message.textContent =
             "This product will be shipped from either of our showrooms.";
@@ -141,8 +124,8 @@
          * Dubai only.
          */
         else if (dubai) {
-          location.textContent =
-            "🇦🇪 Dubai Showroom";
+          location.innerHTML =
+  '<span class="uae-flag"></span> Dubai Showroom';
 
           message.textContent =
             "This product will be shipped from our Dubai showroom.";
@@ -152,8 +135,8 @@
          * Abu Dhabi only.
          */
         else if (abuDhabi) {
-          location.textContent =
-            "🇦🇪 Abu Dhabi Showroom";
+          location.innerHTML =
+  '<span class="uae-flag"></span> Abu Dhabi Showroom';
 
           message.textContent =
             "This product will be shipped from our Abu Dhabi showroom.";
