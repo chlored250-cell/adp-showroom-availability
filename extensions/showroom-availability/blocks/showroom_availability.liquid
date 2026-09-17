@@ -2,7 +2,7 @@
   id="showroom-availability-{{ block.id }}"
   class="showroom-availability"
   data-product-id="{{ product.id }}"
-  style="display:none;"
+  style="display: none;"
 >
   <div class="showroom-availability__label">
     AVAILABLE AT
@@ -10,28 +10,54 @@
 
   <div class="showroom-availability__location">
     <span class="showroom-availability__name"></span>
-    <span class="showroom-availability__status">In Stock</span>
+
+    <span class="showroom-availability__status">
+      In Stock
+    </span>
   </div>
 
   <div class="showroom-availability__message"></div>
 </div>
 
+
 <style>
+  /* ================================
+     MAIN AVAILABILITY BOX
+  ================================= */
+
   .showroom-availability {
     margin: 16px 0;
     padding: 18px;
     background: #f7f6f3;
     border-radius: 12px;
     font-family: inherit;
+    box-sizing: border-box;
   }
+
+  .showroom-availability *,
+  .showroom-availability *::before,
+  .showroom-availability *::after {
+    box-sizing: border-box;
+  }
+
+
+  /* ================================
+     AVAILABLE AT
+  ================================= */
 
   .showroom-availability__label {
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.08em;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     color: #111;
+    line-height: 1.2;
   }
+
+
+  /* ================================
+     LOCATION ROW
+  ================================= */
 
   .showroom-availability__location {
     display: flex;
@@ -39,33 +65,128 @@
     justify-content: space-between;
     gap: 15px;
     margin-bottom: 10px;
+    min-width: 0;
   }
 
+
+  /* ================================
+     LOCATION NAME
+  ================================= */
+
   .showroom-availability__name {
-    display: flex;
+    display: inline-flex !important;
     align-items: center;
-    gap: 8px;
+    min-width: 0;
     font-size: 15px;
     font-weight: 600;
     color: #16803c;
+    line-height: 1.2;
   }
 
-  .showroom-availability__flag {
-    width: 24px;
-    height: 16px;
-    flex: 0 0 24px;
-    display: block;
+
+  /* ================================
+     UAE FLAG
+     FULL CIRCLE
+  ================================= */
+
+  .showroom-availability .uae-flag {
+    display: inline-block !important;
+
+    width: 28px !important;
+    height: 28px !important;
+
+    min-width: 28px !important;
+    max-width: 28px !important;
+
+    min-height: 28px !important;
+    max-height: 28px !important;
+
+    margin-right: 8px !important;
+
+    padding: 0 !important;
+
+    position: relative !important;
+
+    border-radius: 50% !important;
+
+    overflow: hidden !important;
+
+    flex: 0 0 28px !important;
+    flex-shrink: 0 !important;
+
+    vertical-align: middle;
+
+    background:
+      linear-gradient(
+        to bottom,
+        #00732f 0%,
+        #00732f 33.33%,
+        #ffffff 33.33%,
+        #ffffff 66.66%,
+        #000000 66.66%,
+        #000000 100%
+      ) !important;
+
+    border: 2px solid #ffffff !important;
+
+    box-shadow:
+      0 0 0 1px #d8d8d8 !important;
+
+    box-sizing: border-box !important;
   }
+
+
+  /* Red vertical section of UAE flag */
+
+  .showroom-availability .uae-flag::before {
+    content: "" !important;
+
+    position: absolute !important;
+
+    left: 0 !important;
+    top: 0 !important;
+
+    width: 8px !important;
+    height: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: #ff0000 !important;
+
+    z-index: 2 !important;
+
+    border: 0 !important;
+  }
+
+
+  /* ================================
+     IN STOCK BADGE
+  ================================= */
 
   .showroom-availability__status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
     background: #e3f3e8;
     color: #16803c;
+
     padding: 8px 14px;
+
     border-radius: 20px;
+
     font-size: 12px;
     font-weight: 600;
+
     white-space: nowrap;
+    flex-shrink: 0;
   }
+
+
+  /* ================================
+     MESSAGE
+  ================================= */
 
   .showroom-availability__message {
     font-size: 13px;
@@ -73,34 +194,51 @@
     color: #666;
   }
 
+
+  /* ================================
+     MOBILE
+  ================================= */
+
   @media screen and (max-width: 749px) {
+
     .showroom-availability {
       padding: 15px;
     }
 
     .showroom-availability__location {
-      align-items: flex-start;
+      align-items: center;
+      gap: 10px;
     }
 
     .showroom-availability__name {
       font-size: 14px;
     }
 
-    .showroom-availability__flag {
-      width: 22px;
-      height: 15px;
-      flex-basis: 22px;
+    .showroom-availability .uae-flag {
+      width: 26px !important;
+      height: 26px !important;
+      min-width: 26px !important;
+      max-width: 26px !important;
+      min-height: 26px !important;
+      max-height: 26px !important;
+      flex-basis: 26px !important;
+    }
+
+    .showroom-availability .uae-flag::before {
+      width: 7px !important;
     }
 
     .showroom-availability__status {
-      padding: 7px 11px;
+      padding: 7px 12px;
       font-size: 11px;
     }
   }
 </style>
 
+
 <script>
   (function () {
+
     const block = document.getElementById(
       "showroom-availability-{{ block.id }}"
     );
@@ -111,6 +249,7 @@
 
     if (!productId) return;
 
+
     fetch(
       `/apps/showroom-availability?product_id=${encodeURIComponent(productId)}`,
       {
@@ -120,16 +259,25 @@
         }
       }
     )
+
       .then(function (response) {
+
         if (!response.ok) {
-          throw new Error("Showroom availability request failed");
+          throw new Error(
+            "Showroom availability request failed"
+          );
         }
 
         return response.json();
+
       })
+
       .then(function (data) {
+
         const dubai = data.dubai === true;
+
         const abuDhabi = data.abuDhabi === true;
+
 
         const location = block.querySelector(
           ".showroom-availability__name"
@@ -139,86 +287,93 @@
           ".showroom-availability__message"
         );
 
-        /*
-         * UAE FLAG SVG
-         */
-        const uaeFlag = `
-          <svg
-            class="showroom-availability__flag"
-            viewBox="0 0 24 16"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-label="United Arab Emirates"
-            role="img"
-          >
-            <rect width="24" height="16" fill="#FFFFFF"/>
-            <rect x="0" y="0" width="7" height="5.333" fill="#00732F"/>
-            <rect x="0" y="5.333" width="24" height="5.334" fill="#FFFFFF"/>
-            <rect x="0" y="10.667" width="24" height="5.333" fill="#000000"/>
-            <rect x="0" y="0" width="6" height="16" fill="#FF0000"/>
-          </svg>
-        `;
 
         /*
-         * Neither showroom has stock.
+         * No showroom has stock.
          * Keep the entire block hidden.
          */
+
         if (!dubai && !abuDhabi) {
-          block.style.display = "none";
           return;
         }
 
+
         /*
-         * Both showrooms have stock.
+         * BOTH SHOWROOMS
          */
+
         if (dubai && abuDhabi) {
+
           location.innerHTML =
-            uaeFlag +
-            "<span>Dubai & Abu Dhabi Showrooms</span>";
+            '<span class="uae-flag" aria-hidden="true"></span>' +
+            'Dubai & Abu Dhabi Showrooms';
 
           message.textContent =
             "This product will be shipped from either of our showrooms.";
+
         }
 
+
         /*
-         * Dubai only.
+         * DUBAI ONLY
          */
+
         else if (dubai) {
+
           location.innerHTML =
-            uaeFlag +
-            "<span>Dubai Showroom</span>";
+            '<span class="uae-flag" aria-hidden="true"></span>' +
+            'Dubai Showroom';
 
           message.textContent =
             "This product will be shipped from our Dubai showroom.";
+
         }
 
+
         /*
-         * Abu Dhabi only.
+         * ABU DHABI ONLY
          */
+
         else if (abuDhabi) {
+
           location.innerHTML =
-            uaeFlag +
-            "<span>Abu Dhabi Showroom</span>";
+            '<span class="uae-flag" aria-hidden="true"></span>' +
+            'Abu Dhabi Showroom';
 
           message.textContent =
             "This product will be shipped from our Abu Dhabi showroom.";
+
         }
 
+
+        /*
+         * Show availability box
+         */
+
         block.style.display = "block";
+
       })
+
+
       .catch(function (error) {
+
         console.error(
           "Showroom availability:",
           error
         );
 
         /*
-         * If the API fails, don't show
-         * an incorrect availability message.
+         * Never show incorrect availability
+         * if the API fails.
          */
+
         block.style.display = "none";
+
       });
+
   })();
 </script>
+
 
 {% schema %}
 {
