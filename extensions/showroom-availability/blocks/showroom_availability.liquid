@@ -1,0 +1,185 @@
+<div
+  id="showroom-availability-{{ block.id }}"
+  class="showroom-availability"
+  data-product-id="{{ product.id }}"
+  style="display:none;"
+>
+  <div class="showroom-availability__label">
+    AVAILABLE AT
+  </div>
+
+  <div class="showroom-availability__location">
+    <span class="showroom-availability__name"></span>
+    <span class="showroom-availability__status">In Stock</span>
+  </div>
+
+  <div class="showroom-availability__message"></div>
+</div>
+
+<style>
+  .showroom-availability {
+    margin: 16px 0;
+    padding: 18px 18px;
+    background: #f7f6f3;
+    border-radius: 12px;
+    font-family: inherit;
+  }
+
+  .showroom-availability__label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+    color: #111;
+  }
+
+  .showroom-availability__location {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 10px;
+  }
+
+  .showroom-availability__name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #16803c;
+  }
+
+  .showroom-availability__status {
+    background: #e3f3e8;
+    color: #16803c;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .showroom-availability__message {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #666;
+  }
+
+  @media screen and (max-width: 749px) {
+    .showroom-availability {
+      padding: 15px;
+    }
+
+    .showroom-availability__location {
+      align-items: flex-start;
+    }
+
+    .showroom-availability__name {
+      font-size: 14px;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const block = document.getElementById(
+      "showroom-availability-{{ block.id }}"
+    );
+
+    if (!block) return;
+
+    const productId = block.dataset.productId;
+
+    if (!productId) return;
+
+    fetch(
+      `/apps/showroom-availability?product_id=${encodeURIComponent(productId)}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json"
+        }
+      }
+    )
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("Showroom availability request failed");
+        }
+
+        return response.json();
+      })
+      .then(function (data) {
+        const dubai = data.dubai === true;
+        const abuDhabi = data.abuDhabi === true;
+
+        const location = block.querySelector(
+          ".showroom-availability__name"
+        );
+
+        const message = block.querySelector(
+          ".showroom-availability__message"
+        );
+
+        /*
+         * Neither showroom has stock:
+         * keep the entire block hidden.
+         */
+        if (!dubai && !abuDhabi) {
+          return;
+        }
+
+        /*
+         * Both showrooms have stock.
+         */
+        if (dubai && abuDhabi) {
+          location.textContent =
+            "🇦🇪 Dubai & Abu Dhabi Showrooms";
+
+          message.textContent =
+            "This product will be shipped from either of our showrooms.";
+        }
+
+        /*
+         * Dubai only.
+         */
+        else if (dubai) {
+          location.textContent =
+            "🇦🇪 Dubai Showroom";
+
+          message.textContent =
+            "This product will be shipped from our Dubai showroom.";
+        }
+
+        /*
+         * Abu Dhabi only.
+         */
+        else if (abuDhabi) {
+          location.textContent =
+            "🇦🇪 Abu Dhabi Showroom";
+
+          message.textContent =
+            "This product will be shipped from our Abu Dhabi showroom.";
+        }
+
+        block.style.display = "block";
+      })
+      .catch(function (error) {
+        console.error(
+          "Showroom availability:",
+          error
+        );
+
+        /*
+         * If the request fails, don't show
+         * an incorrect availability message.
+         */
+        block.style.display = "none";
+      });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Showroom Availability",
+  "target": "section",
+  "settings": []
+}
+{% endschema %}
