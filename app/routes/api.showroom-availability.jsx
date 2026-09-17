@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+
 import { authenticate } from "../shopify.server";
 
 export async function loader({ request }) {
@@ -50,7 +50,8 @@ export async function loader({ request }) {
 
   const levels =
     data?.data?.product?.variants?.nodes?.flatMap(
-      (variant) => variant?.inventoryItem?.inventoryLevels?.nodes || [],
+      (variant) =>
+        variant?.inventoryItem?.inventoryLevels?.nodes || [],
     ) || [];
 
   const showroomStock = {
@@ -62,20 +63,24 @@ export async function loader({ request }) {
     const quantity =
       level?.quantities?.find((q) => q)?.quantity || 0;
 
-
+    const locationName =
+      level?.location?.name || "";
 
     if (quantity > 0) {
-  if (level?.location?.name === "Dubai Showroom") {
-    showroomStock.dubai = true;
-  }
+      if (locationName === "Dubai Showroom") {
+        showroomStock.dubai = true;
+      }
 
-  if (level?.location?.name === "Galleria Mall, Abu Dhabi") {
-    showroomStock.abuDhabi = true;
-  }
-}
+      if (locationName === "Galleria Mall, Abu Dhabi") {
+        showroomStock.abuDhabi = true;
       }
     }
   }
 
-  return json(showroomStock);
+  return new Response(JSON.stringify(showroomStock), {
+  status: 200,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 }
