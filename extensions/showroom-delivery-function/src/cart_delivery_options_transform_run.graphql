@@ -36,6 +36,7 @@ query RunInput {
       deliveryOptions {
         handle
         title
+        deliveryMethodType
       }
     }
   }

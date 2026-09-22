@@ -23,36 +23,62 @@ export function cartDeliveryOptionsTransformRun(input) {
     return NO_CHANGES;
   }
 
+  /*
+   * Get showroom availability for every product.
+   *
+   * Expected metafield:
+   * {
+   *   "dubai": true,
+   *   "abuDhabi": false
+   * }
+   */
+
   const showroomLocations = lines.map((line) => {
     return line?.merchandise?.product?.metafield?.jsonValue || {};
   });
 
+  /*
+   * Check whether ALL products are available
+   * in Dubai.
+   */
   const allDubai = showroomLocations.every(
     (location) => location.dubai === true
   );
 
+  /*
+   * Check whether ALL products are available
+   * in Abu Dhabi.
+   */
   const allAbuDhabi = showroomLocations.every(
     (location) => location.abuDhabi === true
   );
 
-  // Same showroom → leave Shopify pickup options untouched.
+  /*
+   * If every item is available in the same showroom,
+   * keep Shopify's pickup option.
+   */
   if (allDubai || allAbuDhabi) {
     return NO_CHANGES;
   }
 
-  // Split between Dubai and Abu Dhabi → hide pickup.
+  /*
+   * Items are split between Dubai and Abu Dhabi.
+   *
+   * Hide ONLY pickup options.
+   * Delivery must remain available.
+   */
   const operations = [];
 
   for (const group of input.cart.deliveryGroups || []) {
     for (const option of group.deliveryOptions || []) {
-      const title = (option.title || "").toLowerCase();
 
-      if (
-        title.includes("pickup") ||
-        title.includes("pick up") ||
-        title.includes("store pickup") ||
-        title.includes("in-store")
-      ) {
+      /*
+       * Shopify's actual delivery method type.
+       *
+       * PICK_UP = pickup
+       * SHIPPING = delivery/shipping
+       */
+      if (option.deliveryMethodType === "PICK_UP") {
         operations.push({
           deliveryOptionHide: {
             deliveryOptionHandle: option.handle,
