@@ -17,18 +17,52 @@ const NO_CHANGES = {
  * @returns {CartDeliveryOptionsTransformRunResult}
  */
 export function cartDeliveryOptionsTransformRun(input) {
-  /*
-   * IMPORTANT:
-   *
-   * Do NOT hide pickup when products are split
-   * between Dubai and Abu Dhabi.
-   *
-   * Shopify should handle the native pickup
-   * availability.
-   *
-   * This function should currently make no
-   * changes to Shopify's pickup options.
-   */
+  const lines = input?.cart?.lines || [];
 
-  return NO_CHANGES;
+  if (!lines.length) {
+    return NO_CHANGES;
+  }
+
+  const showroomLocations = lines.map((line) => {
+    return line?.merchandise?.product?.metafield?.jsonValue || {};
+  });
+
+  const allDubai = showroomLocations.every(
+    (location) => location.dubai === true
+  );
+
+  const allAbuDhabi = showroomLocations.every(
+    (location) => location.abuDhabi === true
+  );
+
+  // Same showroom → leave Shopify pickup options untouched.
+  if (allDubai || allAbuDhabi) {
+    return NO_CHANGES;
+  }
+
+  // Split between Dubai and Abu Dhabi → hide pickup.
+  const operations = [];
+
+  for (const group of input.cart.deliveryGroups || []) {
+    for (const option of group.deliveryOptions || []) {
+      const title = (option.title || "").toLowerCase();
+
+      if (
+        title.includes("pickup") ||
+        title.includes("pick up") ||
+        title.includes("store pickup") ||
+        title.includes("in-store")
+      ) {
+        operations.push({
+          deliveryOptionHide: {
+            deliveryOptionHandle: option.handle,
+          },
+        });
+      }
+    }
+  }
+
+  return {
+    operations,
+  };
 }
