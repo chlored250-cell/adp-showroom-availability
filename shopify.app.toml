@@ -1,4 +1,5 @@
-# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+# Learn more about configuring your app at
+# https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "c3cc609a74e3fb280387e1deedf321d2"
 name = "ADP Showroom Availability"
@@ -20,7 +21,7 @@ api_version = "2026-07"
   topics = [ "app/uninstalled" ]
 
 [access_scopes]
-scopes = "read_inventory,read_locations,write_products,write_app_proxy"
+scopes = "read_inventory,read_locations,write_products,write_app_proxy,write_delivery_customizations"
 
 [app_proxy]
 url = "/api/showroom-availability"
@@ -30,7 +31,9 @@ optional_scopes = []
 use_legacy_install_flow = false
 
 [auth]
-redirect_urls = ["https://adp-showroom-availability.onrender.com/auth/callback"]
+redirect_urls = [
+  "https://adp-showroom-availability.onrender.com/auth/callback"
+]
 
 [product.metafields.app.demo_info]
 type = "single_line_text_field"
@@ -55,3 +58,11 @@ required = true
 [metaobjects.app.example.fields.description]
 name = "Description"
 type = "multi_line_text_field"
+
+[product.metafields.app.showroom_availability]
+name = "Showroom Availability"
+description = "Stores whether the product is available at the Dubai and Abu Dhabi showrooms."
+type = "json"
+
+[product.metafields.app.showroom_availability.access]
+admin = "merchant_read_write"

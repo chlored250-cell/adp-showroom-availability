@@ -1,0 +1,42 @@
+query RunInput {
+  deliveryCustomization {
+    metafield(
+      namespace: "$app:showroom-delivery-function"
+      key: "function-configuration"
+    ) {
+      jsonValue
+    }
+  }
+
+  cart {
+    lines {
+      merchandise {
+        __typename
+
+        ... on ProductVariant {
+          id
+
+          product {
+            id
+
+            metafield(
+              namespace: "$app"
+              key: "showroom_availability"
+            ) {
+              jsonValue
+            }
+          }
+        }
+      }
+    }
+
+    deliveryGroups {
+      id
+
+      deliveryOptions {
+        handle
+        title
+      }
+    }
+  }
+}
