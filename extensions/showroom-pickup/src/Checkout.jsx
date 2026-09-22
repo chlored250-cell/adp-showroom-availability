@@ -1,58 +1,97 @@
 import '@shopify/ui-extensions/preact';
-import {render} from "preact";
+import {render} from 'preact';
 
-// 1. Export the extension
-export default async () => {
-  render(<Extension />, document.body)
-};
+export default function extension() {
+  render(<Extension />, document.body);
+}
 
 function Extension() {
-  // 2. Check instructions for feature availability
-  if (!shopify.instructions.value.metafields.canSetCartMetafields) {
+  const lines = shopify.lines.value || [];
+  const metafields = shopify.appMetafields.value || [];
+
+  if (!lines.length) {
+    return null;
+  }
+
+  /*
+   * Get showroom availability for every product in the cart.
+   */
+  const availability = lines.map((line) => {
+    const productId = line?.merchandise?.product?.id;
+
+    const entry = metafields.find(
+      (item) =>
+        item.target.type === 'product' &&
+        item.target.id === productId &&
+        item.metafield.namespace === '$app' &&
+        item.metafield.key === 'showroom_availability'
+    );
+
+    if (!entry) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(entry.metafield.value);
+    } catch {
+      return {};
+    }
+  });
+
+  /*
+   * Determine whether the complete cart
+   * can be picked up from one showroom.
+   */
+  const allDubai = availability.every(
+    (location) => location.dubai === true
+  );
+
+  const allAbuDhabi = availability.every(
+    (location) => location.abuDhabi === true
+  );
+
+  /*
+   * Mixed showroom cart:
+   * some products are Dubai-only and
+   * others are Abu Dhabi-only.
+   */
+  if (!allDubai && !allAbuDhabi) {
     return (
-      <s-banner heading="showroom-pickup" tone="warning">
-        {shopify.i18n.translate("metafieldChangesAreNotSupported")}
-      </s-banner>
+      <s-box
+        padding="base"
+        border="base"
+        borderRadius="base"
+      >
+        <s-stack gap="tight">
+
+          <s-text type="strong">
+            Store pickup isn't available for this order
+          </s-text>
+
+          <s-text color="subdued">
+            Your items are currently available at
+            different showrooms.
+          </s-text>
+
+          <s-text color="subdued">
+            Please choose delivery, or place separate
+            orders to collect your items from our
+            showrooms.
+          </s-text>
+
+        </s-stack>
+      </s-box>
     );
   }
 
-  const freeGiftRequested = shopify.appMetafields.value.find(
-    (appMetafield) =>
-      appMetafield.target.type === "cart" &&
-      appMetafield.metafield.namespace === "$app" &&
-      appMetafield.metafield.key === "requestedFreeGift",
-  );
-
-  // 3. Render a UI
-  return (
-    <s-banner heading="showroom-pickup">
-      <s-stack gap="base">
-        <s-text>
-          {shopify.i18n.translate("welcome", {
-            target: <s-text type="emphasis">{shopify.extension.target}</s-text>,
-          })}
-        </s-text>
-        <s-checkbox
-          checked={freeGiftRequested?.metafield?.value === "true"}
-          onChange={onCheckboxChange}
-          label={shopify.i18n.translate("iWouldLikeAFreeGiftWithMyOrder")}
-        />
-      </s-stack>
-    </s-banner>
-  );
-
-  async function onCheckboxChange(event) {
-    const isChecked = event.target.checked;
-    // 4. Call the API to modify checkout
-    const result = await shopify.applyMetafieldChange({
-      type: "updateCartMetafield",
-      metafield: {
-        namespace: "$app",
-        key: "requestedFreeGift",
-        value: isChecked ? "true" : "false",
-        type: "boolean",
-      },
-    });
-    console.log("applyMetafieldChange result", result);
-  }
+  /*
+   * If Shopify already has a valid pickup location,
+   * don't duplicate the native Shopify pickup card.
+   *
+   * Shopify will display:
+   * Dubai Showroom / Abu Dhabi Showroom
+   * FREE
+   * Usually ready in 4 hours
+   */
+  return null;
 }
